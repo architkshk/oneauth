@@ -45,7 +45,7 @@ util.inherits(LmsStrategy, Strategy)
  * @param {Object} options
 
  */
-Strategy.prototype.authenticate = function (req, options) {
+Strategy.prototype.authenticate =  (req, options) => {
     options = options || {}
     let roll_number = req.body.username
     let password = req.body.password
@@ -91,7 +91,7 @@ Strategy.prototype.authenticate = function (req, options) {
             "institute-id": self._instituteId
         },
         form: loginForm
-    }, function (err, resp, body) {
+    },  (err, resp, body) => {
         if (err || resp.statusCode != 200) {
             return self.fail(err, 500)
         }
@@ -103,7 +103,7 @@ Strategy.prototype.authenticate = function (req, options) {
                     "institute-id": self._instituteId,
                     "access-token": accessToken
                 }
-            }, function (error, response, userdata) {
+            },  (error, response, userdata) => {
                 if (err || resp.statusCode != 200) {
                     return self.fail(err, 500)
                 }

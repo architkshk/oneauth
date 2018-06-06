@@ -6,11 +6,11 @@ const BearerStrategy = require('passport-http-bearer').Strategy
 
 const models = require('../../db/models').models
 
-const bearerStrategy = new BearerStrategy(function (token, done) {
+const bearerStrategy = new BearerStrategy( (token, done) => {
     models.AuthToken.findOne({
         where: {token: token},
         include: [models.User, models.Client]
-    }).then(function (authToken) {
+    }).then( (authToken) => {
         if (!authToken) {
             return done(null, false)
         }

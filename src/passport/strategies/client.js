@@ -17,10 +17,10 @@ const models = require('../../db/models').models
  * @param clientSecret
  * @param done
  */
-const verifyClient = function (clientId, clientSecret, done) {
+const verifyClient =  (clientId, clientSecret, done) => {
     models.Client.findOne({
         where: {id: clientId}
-    }).then(function (client) {
+    }).then( (client) => {
         if (!client) {
             return done(null, false)
         }

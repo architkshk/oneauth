@@ -23,7 +23,7 @@ module.exports = new FacebookStrategy({
     callbackURL: config.SERVER_URL + config.FACEBOOK_CALLBACK,
     profileFields: ['id', 'name', 'picture', 'email'],
     passReqToCallback: true,
-}, function (req, authToken, refreshToken, profile, cb) {
+},  (req, authToken, refreshToken, profile, cb) => {
     let profileJson = profile._json
     let oldUser = req.user
     // DATADOG TRACE: START SPAN
@@ -46,10 +46,10 @@ module.exports = new FacebookStrategy({
                         photo: "https://graph.facebook.com/" + profileJson.id + "/picture?type=large",
                         userId: oldUser.id
                     })
-                        .then(function (updated) {
+                        .then( (updated) => {
                             return models.User.findById(oldUser.id)
                         })
-                        .then(function (user) {
+                        .then( (user) => {
                             // DATADOG TRACE: END SPAN
                             user.update({photo: "https://graph.facebook.com/" + profileJson.id + "/picture?type=large"})
                             setImmediate(() => {
@@ -94,7 +94,7 @@ module.exports = new FacebookStrategy({
                     photo: "https://graph.facebook.com/" + profileJson.id + "/picture?type=large"
                 }
             }
-        }).spread(function (userFacebook, created) {
+        }).spread( (userFacebook, created) => {
             //TODO: Check 'created' == true to see if first time user
             if (!userFacebook) {
                 return cb(null, false, {message: 'Authentication Failed'})

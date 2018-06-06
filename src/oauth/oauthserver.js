@@ -11,14 +11,14 @@ const models = require('../db/models').models
 
 const server = oauth.createServer()
 
-server.serializeClient(function (client, done) {
+server.serializeClient((client, done) => {
     return done(null, client.id)
 })
 
-server.deserializeClient(function (clientId, done) {
+server.deserializeClient((clientId, done) => {
     models.Client.findOne({
         where: {id: clientId}
-    }).then(function (client) {
+    }).then((client) => {
         return done(null, client)
     }).catch(err => console.log(err))
 })
@@ -28,15 +28,15 @@ server.deserializeClient(function (clientId, done) {
  * that has to be exchanged for an access token later
  */
 server.grant(oauth.grant.code(
-    function (client, redirectURL, user, ares, done) {
+    (client, redirectURL, user, ares, done)=> {
         console.log('oauth: getting grant code for ' + client.id + ' and ' + user.id)
         models.GrantCode.create({
             code: generator.genNcharAlphaNum(config.GRANT_TOKEN_SIZE),
             clientId: client.id,
             userId: user.id
-        }).then(function (grantCode) {
+        }).then((grantCode)=> {
             return done(null, grantCode.code)
-        }).catch(function (err) {
+        }).catch((err) =>{
             return done(err)
         })
     }
@@ -45,16 +45,16 @@ server.grant(oauth.grant.code(
  * Generate refresh token
  */
 server.grant(oauth.grant.token(
-    function (client, user, ares, done) {
+    (client, user, ares, done) => {
         models.AuthToken.create({
             token: generator.genNcharAlphaNum(config.AUTH_TOKEN_SIZE),
             scope: ['*'],
             explicit: false,
             clientId: client.id,
             userId: user.id
-        }).then(function (authToken) {
+        }).then((authToken) => {
             return done(null, authToken.token)
-        }).catch(function (err) {
+        }).catch((err) => {
             return done(err)
         })
 
@@ -65,12 +65,12 @@ server.grant(oauth.grant.token(
  * Exchange **grant code** to get access token
  */
 server.exchange(oauth.exchange.code(
-    function (client, code, redirectURI, done) {
+    (client, code, redirectURI, done) => {
         console.log('oneauth: exchange')
         models.GrantCode.findOne({
             where: {code: code},
             include: [models.Client]
-        }).then(function (grantCode) {
+        }).then((grantCode) => {
             if (!grantCode) {
                 return done(null, false) // Grant code does not exist
             }
@@ -98,9 +98,9 @@ server.exchange(oauth.exchange.code(
                     clientId: grantCode.clientId,
                     userId: grantCode.userId
                 }
-            }).spread(function (authToken, created) {
+            }).spread((authToken, created) => {
                 return done(null, authToken.token)
-            }).catch(function (err) {
+            }).catch((err) => {
                 return done(err)
             })
 
@@ -116,11 +116,11 @@ server.exchange(oauth.exchange.code(
 
 const authorizationMiddleware = [
     cel.ensureLoggedIn('/login'),
-    server.authorization(function (clientId, callbackURL, done) {
+    server.authorization((clientId, callbackURL, done)=>  {
         console.log('oauth: authorize')
         models.Client.findOne({
             where: {id: clientId}
-        }).then(function (client) {
+        }).then( (client) => {
             if (!client) {
                 return done(null, false)
             }
@@ -132,25 +132,25 @@ const authorizationMiddleware = [
             }
             return done(null, false)
         }).catch(err => console.log(err))
-    }, function (client, user, done) {
+    }, (client, user, done) => {
         //TODO: Check if we can auto approve
         models.AuthToken.findOne({
             where: {
                 clientId: client.id,
                 userId: user.id
             }
-        }).then(function (authToken) {
+        }).then((authToken) => {
             if (!authToken) {
                 return done(null, false)
             } else {
                 return done(null, true)
             }
-        }).catch(function (err) {
+        }).catch( (err) => {
             return done(err)
         })
 
     }),
-    function (req, res) {
+     (req, res) => {
         res.render("authdialog", {
             transactionID: req.oauth2.transactionID,
             user: req.user,
