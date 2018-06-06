@@ -23,7 +23,7 @@ module.exports = new FacebookStrategy({
     callbackURL: config.SERVER_URL + config.FACEBOOK_CALLBACK,
     profileFields: ['id', 'name', 'picture', 'email'],
     passReqToCallback: true,
-}, function (req, authToken, refreshToken, profile, cb) {
+}, async function (req, authToken, refreshToken, profile, cb) {
     let profileJson = profile._json
     let oldUser = req.user
     // DATADOG TRACE: START SPAN
@@ -32,24 +32,21 @@ module.exports = new FacebookStrategy({
     if (oldUser) {
         if (config.DEBUG)
             console.log('User exists, is connecting Facebook account')
-        models.UserFacebook.findOne({where: {id: profileJson.id}})
-            .then((fbaccount) => {
-
+            try {
+                const fbaccount = await models.UserFacebook.findOne({where: {id: profileJson.id}})
                 if (fbaccount) {
                     throw new Error('Your Facebook account is already linked with codingblocks account Id: ' + fbaccount.dataValues.userId)
                 }
                 else {
-                    models.UserFacebook.upsert({
-                        id: profileJson.id,
-                        accessToken: authToken,
-                        refreshToken: refreshToken,
-                        photo: "https://graph.facebook.com/" + profileJson.id + "/picture?type=large",
-                        userId: oldUser.id
-                    })
-                        .then(function (updated) {
-                            return models.User.findById(oldUser.id)
-                        })
-                        .then(function (user) {
+                    try {
+                        const updated = await models.UserFacebook.upsert({
+                            id: profileJson.id,
+                            accessToken: authToken,
+                            refreshToken: refreshToken,
+                            photo: "https://graph.facebook.com/" + profileJson.id + "/picture?type=large",
+                            userId: oldUser.id
+                        });
+                            const user = await models.User.findById(oldUser.id);
                             // DATADOG TRACE: END SPAN
                             user.update({photo: "https://graph.facebook.com/" + profileJson.id + "/picture?type=large"})
                             setImmediate(() => {
@@ -64,38 +61,37 @@ module.exports = new FacebookStrategy({
                                 span.finish()
                             })
                             return cb(null, user.get())
-                        })
-                        .catch((err) => {
-                            Raven.captureException(err)
-                            return cb(err, null)
-                        })
+                    } catch (err) {
+                        Raven.captureException(err)
+                        return cb(null, false, {message: err.message})
+                    }
                 }
-            })
-            .catch((err) => {
-                Raven.captureException(err)
-                return cb(null, false, {message: err.message})
-            })
+            }
+        catch (err) {
+            Raven.captureException(err)
+            return cb(err, null)
+        }
     }
     else {
 
-        models.UserFacebook.findCreateFind({
-            include: [models.User],
-            where: {id: profileJson.id},
-            defaults: {
-                id: profileJson.id,
-                accessToken: authToken,
-                refreshToken: refreshToken,
-                photo: "https://graph.facebook.com/" + profileJson.id + "/picture?type=large",
-                user: {
-                    username: profileJson.first_name + '-' + profileJson.last_name + '-' + profileJson.id,
-                    firstname: profileJson.first_name,
-                    lastname: profileJson.last_name,
-                    email: profileJson.email,
-                    photo: "https://graph.facebook.com/" + profileJson.id + "/picture?type=large"
+        try {
+            const {userFacebook, created} = await models.UserFacebook.findCreateFind({
+                include: [models.User],
+                where: {id: profileJson.id},
+                defaults: {
+                    id: profileJson.id,
+                    accessToken: authToken,
+                    refreshToken: refreshToken,
+                    photo: "https://graph.facebook.com/" + profileJson.id + "/picture?type=large",
+                    user: {
+                        username: profileJson.first_name + '-' + profileJson.last_name + '-' + profileJson.id,
+                        firstname: profileJson.first_name,
+                        lastname: profileJson.last_name,
+                        email: profileJson.email,
+                        photo: "https://graph.facebook.com/" + profileJson.id + "/picture?type=large"
+                    }
                 }
-            }
-        }).spread(function (userFacebook, created) {
-            //TODO: Check 'created' == true to see if first time user
+            });
             if (!userFacebook) {
                 return cb(null, false, {message: 'Authentication Failed'})
             }
@@ -112,8 +108,9 @@ module.exports = new FacebookStrategy({
                 span.finish()
             })
             return cb(null, userFacebook.user.get())
-        }).catch((err) => Raven.captureException(err))
+        }
+        catch (err) {
+            Raven.captureException(err)
+        }
     }
-
-
 })

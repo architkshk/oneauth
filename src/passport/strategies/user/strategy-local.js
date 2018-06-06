@@ -13,30 +13,32 @@ const passutils = require('../../../utils/password')
  * via a simple post request
  */
 
-module.exports = new LocalStrategy(function (username, password, cb) {
+ module.exports = new LocalStrategy(async function(username, password, cb) {
+     Raven.setContext({extra: {file: 'localstrategy'}})
 
-    Raven.setContext({extra: {file: 'localstrategy'}})
-    models.UserLocal.findOne({
-        include: [{model: models.User, where: {username: username}}],
-    }).then(function (userLocal) {
-        if (!userLocal) {
-            return cb(null, false, {message: 'Invalid Username'})
-        }
+     try {
+       const userLocal = await models.UserLocal.findOne({
+           include: [{model: models.User, where: {username: username}}],
+       });
+       if (!userLocal) {
+           return cb(null, false, {message: 'Invalid Username'})
+       }
+       else {
+         try {
+           const match = await passutils.compare2hash(password, userLocal.password);
 
-        passutils.compare2hash(password, userLocal.password)
-            .then(function (match) {
-                if (match) {
-                    return cb(null, userLocal.user.get())
-                } else {
-                    return cb(null, false, {message: 'Invalid Password'})
-                }
-            })
-            .catch(function (err) {
-                console.trace(err.message)
-                Raven.captureException(err)
-                return cb(err, false, {message: err})
-            })
-
-    }).catch((err) => Raven.captureException(err))
-
-})
+           if (match) {
+               return cb(null, userLocal.user.get())
+           } else {
+               return cb(null, false, {message: 'Invalid Password'})
+           }
+         } catch(err) {
+             console.trace(err.message)
+             Raven.captureException(err)
+             return cb(err, false, {message: err})
+         }
+      }
+    } catch(err) {
+        Raven.captureException(err)
+    }
+ })
