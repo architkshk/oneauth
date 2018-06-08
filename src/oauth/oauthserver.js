@@ -80,9 +80,7 @@ server.exchange(oauth.exchange.code(
             }
             let callbackMatch = false
             for (url of client.callbackURL) {
-                const exp = "[^\s]+";
-                const url2 = url.replace('*',exp);
-                if (redirectURI.match(new RegExp(url2))) callbackMatch = true
+                if (redirectURI.startsWith(url)) callbackMatch = true
             }
             if (!callbackMatch) {
                 return done(null, false) // Wrong redirect URI
