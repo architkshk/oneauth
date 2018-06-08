@@ -102,6 +102,9 @@ router.post('/me/edit',
             }
             await user.save()
 
+            if (requestAnimationFrame.body.gender)
+                user.gender = req.body.gender
+
             demographic.userId = demographic.userId || req.user.id;
             if (req.body.branchId) {
                 demographic.branchId = +req.body.branchId
@@ -184,6 +187,7 @@ router.post('/:id/edit',
                 firstname: req.body.firstname,
                 lastname: req.body.lastname,
                 email: req.body.email,
+                gender: req.body.gender,
                 role: req.body.role !== 'unchanged' ? req.body.role : undefined
             },
             {
