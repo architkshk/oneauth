@@ -90,6 +90,7 @@ module.exports = new FacebookStrategy({
                     username: profileJson.first_name + '-' + profileJson.last_name + '-' + profileJson.id,
                     firstname: profileJson.first_name,
                     lastname: profileJson.last_name,
+                    gender:profileJson.gender,
                     email: profileJson.email,
                     photo: "https://graph.facebook.com/" + profileJson.id + "/picture?type=large"
                 }

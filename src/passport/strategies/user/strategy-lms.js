@@ -30,6 +30,7 @@ module.exports = new LmsStrategy({
                 username: profileJson.roll_number,
                 firstname: profileJson.name.split(' ')[0],
                 lastname: profileJson.name.split(' ').pop(),
+                gender:profileJson.gender||undefined,
                 email: profileJson.email,
                 photo: profileJson.photo ? profileJson.photo.url : ""
             }

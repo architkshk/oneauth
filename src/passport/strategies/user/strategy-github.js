@@ -68,6 +68,7 @@ module.exports = new GithubStrategy({
                             firstname: profileJson.name ? profileJson.name.split(' ')[0] : profileJson.login,
                             lastname: profileJson.name ? profileJson.name.split(' ').pop() : profileJson.login,
                             email: profileJson.email,
+                            gender:undefined,
                             photo: profileJson.avatar_url
                         }
                     }

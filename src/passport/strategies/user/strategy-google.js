@@ -60,6 +60,7 @@ module.exports = new GoogleStrategy({
                                 username: existCount === 0 ? profileJson.username : profileJson.username + '-g',
                                 firstname: profileJson.name.givenName,
                                 lastname: profileJson.name.familyName,
+                                gender:profileJson.gender,
                                 photo: profileJson.image.url,
                                 email: profileJson.emails[0].value,
                                 verifiedemail: profileJson.emails[0].value
