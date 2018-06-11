@@ -6,6 +6,7 @@ const oauth = require('oauth2orize')
 
 const models = require('../db/models').models
     , generator = require('../utils/generator')
+    , matchURL = require('../utils/wildcardmatch')
     , passport = require('../passport/passporthandler')
     , config = require('../../config')
 
@@ -77,12 +78,7 @@ server.exchange(oauth.exchange.code(
             if (client.id !== grantCode.client.id) {
                 return done(null, false) //Wrong Client ID
             }
-            let callbackMatch = false
-            for (url of client.callbackURL) {
-                const exp = "[^\s]+";
-                const url2 = url.replace('*',exp);
-                if (redirectURI.match(new RegExp(url2))) callbackMatch = true
-            }
+            let callbackMatch = matchURL(client.callbackURL,redirectURIredirectURI)
             if (!callbackMatch) {
                 return done(null, false) // Wrong redirect URI
             }
@@ -127,10 +123,9 @@ const authorizationMiddleware = [
                 return done(null, false)
             }
             console.log(callbackURL)
-            for (url of client.callbackURL) {
-                if (callbackURL.startsWith(url)) {
-                    return done(null, client, callbackURL)
-                }
+            let callbackMatch = matchURL(client.callbackURL,callbackURL)
+            if (callbackMatch) {
+                return done(null, client, callbackURL)
             }
             return done(null, false)
         }).catch(err => console.log(err))
