@@ -9,6 +9,7 @@ const models = require('../db/models').models
     , matchURL = require('../utils/wildcardmatch')
     , passport = require('../passport/passporthandler')
     , config = require('../../config')
+    , debug = require('debug')('oauth:oauthserver')
 
 const server = oauth.createServer()
 
@@ -21,7 +22,7 @@ server.deserializeClient(function (clientId, done) {
         where: {id: clientId}
     }).then(function (client) {
         return done(null, client)
-    }).catch(err => console.log(err))
+    }).catch(err => debug(err))
 })
 
 /**
@@ -30,7 +31,7 @@ server.deserializeClient(function (clientId, done) {
  */
 server.grant(oauth.grant.code(
     function (client, redirectURL, user, ares, done) {
-        console.log('oauth: getting grant code for ' + client.id + ' and ' + user.id)
+        debug('oauth: getting grant code for ' + client.id + ' and ' + user.id)
         models.GrantCode.create({
             code: generator.genNcharAlphaNum(config.GRANT_TOKEN_SIZE),
             clientId: client.id,
@@ -67,7 +68,7 @@ server.grant(oauth.grant.token(
  */
 server.exchange(oauth.exchange.code(
     function (client, code, redirectURI, done) {
-        console.log('oneauth: exchange')
+        debug('oneauth: exchange')
         models.GrantCode.findOne({
             where: {code: code},
             include: [models.Client]
@@ -106,7 +107,7 @@ server.exchange(oauth.exchange.code(
             //so it cannot be reused
             grantCode.destroy()
 
-        }).catch(err => console.log(err))
+        }).catch(err => debug(err))
     }
 ))
 
@@ -115,22 +116,26 @@ server.exchange(oauth.exchange.code(
 const authorizationMiddleware = [
     cel.ensureLoggedIn('/login'),
     server.authorization(function (clientId, callbackURL, done) {
-        console.log('oauth: authorize')
+        debug('oauth: authorize')
         models.Client.findOne({
             where: {id: clientId}
         }).then(function (client) {
             if (!client) {
                 return done(null, false)
             }
-            console.log(callbackURL)
+            debug(callbackURL)
+            // We validate that callbackURL matches with any one registered in DB
             let callbackMatch = matchURL(client.callbackURL,callbackURL)
             if (callbackMatch) {
                 return done(null, client, callbackURL)
             }
             return done(null, false)
-        }).catch(err => console.log(err))
+        }).catch(err => debug(err))
     }, function (client, user, done) {
-        //TODO: Check if we can auto approve
+        // Auto approve if this is trusted client
+        if (client.trusted) {
+            return done(null, true)
+        }
         models.AuthToken.findOne({
             where: {
                 clientId: client.id,
@@ -167,9 +172,19 @@ server.exchange(oauth.exchange.clientCredentials((client, scope, done) => {
       where: {id: client.get().id}
   })
  .then((localClient) => {
-    if (!localClient) return done(null, false);
-     if (localClient.get().secret !== client.get().secret) return done(null, false);
-     if (!localClient.get().trusted) return done(null, false);
+    if (!localClient) {
+        return done(null, false);
+    }
+     if (localClient.get().secret !== client.get().secret) {
+         // Password (secret) of client is wrong
+         return done(null, false);
+     }
+
+     if (!localClient.get().trusted) {
+         // Client is not trusted
+         return done(null, false);
+     }
+
      // Everything validated, return the token
      const token = generator.genNcharAlphaNum(config.AUTH_TOKEN_SIZE)
      // Pass in a null for user id since there is no user with this grant type
@@ -178,7 +193,7 @@ server.exchange(oauth.exchange.clientCredentials((client, scope, done) => {
          scope: ['*'],
          explicit: false,
          clientId: client.get().id,
-         userId: null
+         userId: null // This is a client scoped token, so no related user here
      }).then((Authtoken) => {
       return done(null , Authtoken.get().token)
      })
