@@ -79,7 +79,7 @@ server.exchange(oauth.exchange.code(
             if (client.id !== grantCode.client.id) {
                 return done(null, false) //Wrong Client ID
             }
-            let callbackMatch = matchURL(client.callbackURL,redirectURIredirectURI)
+            let callbackMatch = matchURL(client.callbackURL,redirectURIredirectURI);
             if (!callbackMatch) {
                 return done(null, false) // Wrong redirect URI
             }
@@ -125,7 +125,7 @@ const authorizationMiddleware = [
             }
             debug(callbackURL)
             // We validate that callbackURL matches with any one registered in DB
-            let callbackMatch = matchURL(client.callbackURL,callbackURL)
+            let callbackMatch = matchURL(client.callbackURL,callbackURL);
             if (callbackMatch) {
                 return done(null, client, callbackURL)
             }
