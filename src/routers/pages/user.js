@@ -230,4 +230,63 @@ router.post('/:id/edit',
     }
 )
 
+router.get('users/me/clients',
+    cel.ensureLoggedIn('/login'),
+    function (req, res, next) {
+        models.Client.findAll({
+            where: {userId: req.user.id}
+        }).then(function (clients) {
+            return res.render('client/all', {clients: clients})
+        }).catch(function (err) {
+            res.send("No clients registered")
+        })
+    }
+)
+
+router.get('users/me/clients/add',
+    cel.ensureLoggedIn('/login'),
+    function (req, res, next) {
+        return res.render('client/add')
+    }
+)
+
+router.get('users/me/clients/:id',
+    cel.ensureLoggedIn('/login'),
+    function (req, res, next) {
+        models.Client.findOne({
+            where: {id: req.params.id}
+        }).then(function (client) {
+            if (!client) {
+                return res.send("Invalid Client Id")
+            }
+            if (client.userId != req.user.id) {
+                return res.send("Unauthorized user")
+            }
+
+            return res.render('client/id', {client: client})
+        })
+    }
+)
+
+
+router.get('users/me/clients/:id/edit',
+    cel.ensureLoggedIn('/login'),
+    function (req, res, next) {
+        models.Client.findOne({
+            where: {id: req.params.id}
+        }).then(function (client) {
+            if (!client) {
+                return res.send("Invalid Client Id")
+            }
+            if (client.userId != req.user.id) {
+                return res.send("Unauthorized user")
+            }
+            client.clientDomains = client.domain.join(";")
+            client.clientCallbacks = client.callbackURL.join(";")
+
+            return res.render('client/edit', {client: client})
+        })
+    }
+)
+
 module.exports = router

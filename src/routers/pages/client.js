@@ -7,19 +7,6 @@ const acl = require('../../middlewares/acl')
 
 const models = require('../../db/models').models
 
-router.get('/me',
-    cel.ensureLoggedIn('/login'),
-    function (req, res, next) {
-        models.Client.findAll({
-            where: {userId: req.user.id}
-        }).then(function (clients) {
-            return res.render('client/all', {clients: clients})
-        }).catch(function (err) {
-            res.send("No clients registered")
-        })
-    }
-)
-
 router.get('/',acl.ensureAdmin,function (req,res,next) {
     models.Client.findAll({})
         .then(function (clients) {
@@ -28,51 +15,5 @@ router.get('/',acl.ensureAdmin,function (req,res,next) {
             res.send("No clients Registered")
     })
 })
-
-router.get('/add',
-    cel.ensureLoggedIn('/login'),
-    function (req, res, next) {
-        return res.render('client/add')
-    }
-)
-
-router.get('/:id',
-    cel.ensureLoggedIn('/login'),
-    function (req, res, next) {
-        models.Client.findOne({
-            where: {id: req.params.id}
-        }).then(function (client) {
-            if (!client) {
-                return res.send("Invalid Client Id")
-            }
-            if (client.userId != req.user.id) {
-                return res.send("Unauthorized user")
-            }
-
-            return res.render('client/id', {client: client})
-        })
-    }
-)
-
-
-router.get('/:id/edit',
-    cel.ensureLoggedIn('/login'),
-    function (req, res, next) {
-        models.Client.findOne({
-            where: {id: req.params.id}
-        }).then(function (client) {
-            if (!client) {
-                return res.send("Invalid Client Id")
-            }
-            if (client.userId != req.user.id) {
-                return res.send("Unauthorized user")
-            }
-            client.clientDomains = client.domain.join(";")
-            client.clientCallbacks = client.callbackURL.join(";")
-
-            return res.render('client/edit', {client: client})
-        })
-    }
-)
 
 module.exports = router

@@ -21,7 +21,7 @@ router.use(function (req, res, next) {
 
 router.use('/', makeGaEvent('view', 'page', '/'), publicroute)
 router.use('/users', makeGaEvent('view', 'page', '/users'), userroute)
-router.use('/clients', makeGaEvent('view', 'page', '/clients'), clientroute)
+router.use('/clients/all', makeGaEvent('view', 'page', '/clients/all'), clientroute)
 router.use('/address', makeGaEvent('view', 'page', '/address'), addressroute)
 router.use('/forgot', makeGaEvent('view', 'page', '/forgot'), forgotroute)
 router.use('/apps', makeGaEvent('view', 'page', '/apps'), approute)
