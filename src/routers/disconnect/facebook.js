@@ -4,7 +4,7 @@
 const router = require('express').Router()
 const models = require('../../db/models').models
 
-DisconnectFacebook = (req, res) => {
+const DisconnectFacebook = (req, res) => {
 
     let existingUser = req.user
 

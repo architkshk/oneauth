@@ -1,4 +1,4 @@
-ensureAdmin = (req, res, next) => {
+const ensureAdmin = (req, res, next) => {
     if ((req.user.role === 'admin')) {
         next()
     } else {
@@ -6,7 +6,7 @@ ensureAdmin = (req, res, next) => {
     }
 }
 
-ensureRole = (role) => {
+const ensureRole = (role) => {
     return function (req, res, next) {
         if (req.user.role === role) {
             next()

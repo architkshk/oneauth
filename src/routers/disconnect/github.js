@@ -4,7 +4,7 @@
 const router = require('express').Router()
 const models = require('../../db/models').models
 
-DisconnectGithub = (req, res) => {
+const DisconnectGithub = (req, res) => {
 
     let existingUser = req.user
 

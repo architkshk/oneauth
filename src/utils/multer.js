@@ -19,7 +19,7 @@ const upload = Multer ({
     }
 })
 
-deleteMinio = (key) => {
+const deleteMinio = (key) => {
     Minio.deleteObject('oneauth-assets', key)
 }
 

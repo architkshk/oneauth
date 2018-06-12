@@ -7,7 +7,7 @@ const passport = require('../../passport/passporthandler')
 const config = require('../../../config')
 const debug = require('debug')('oauth:login:facebook')
 
-authnOrAuthzFacebook  = (req, res, next) => {
+const authnOrAuthzFacebook  = (req, res, next) => {
     if (!req.isAuthenticated()) {
         if (config.DEBUG) debug("Authn Facebook = = = = = ")
         passport.authenticate('facebook', {

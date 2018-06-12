@@ -10,7 +10,7 @@ const minioClient = new AWS.S3 ({
     signatureVersion: 'v4'
 })
 
-deleteObject = (bucket, key) => {
+const deleteObject = (bucket, key) => {
     if (typeof bucket !== 'string') {
         throw new Error('bucket not a string')
     } else if (typeof bucket !== 'string') {
