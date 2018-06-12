@@ -24,7 +24,7 @@ module.exports = new FacebookStrategy({
     callbackURL: config.SERVER_URL + config.FACEBOOK_CALLBACK,
     profileFields: ['id', 'name', 'picture', 'email'],
     passReqToCallback: true,
-}, async function (req, authToken, refreshToken, profile, cb) {
+}, async (req, authToken, refreshToken, profile, cb)  => {
     let profileJson = profile._json
     let oldUser = req.user
     // DATADOG TRACE: START SPAN

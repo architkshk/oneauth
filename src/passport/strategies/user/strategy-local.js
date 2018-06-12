@@ -13,7 +13,7 @@ const passutils = require('../../../utils/password')
  * via a simple post request
  */
 
-module.exports = new LocalStrategy(async function (username, password, cb) {
+module.exports = new LocalStrategy(async (username, password, cb) => {
 
     Raven.setContext({extra: {file: 'localstrategy'}})
     try{

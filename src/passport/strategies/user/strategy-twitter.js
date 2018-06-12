@@ -20,7 +20,7 @@ module.exports = new TwitterStrategy({
     consumerSecret: secrets.TWITTER_CONSUMER_SECRET,
     callbackURL: config.SERVER_URL + config.TWITTER_CALLBACK,
     passReqToCallback: true
-}, async function (req, token, tokenSecret, profile, cb) {
+}, async (req, token, tokenSecret, profile, cb) => {
 
     let profileJson = profile._json
     let oldUser = req.user

@@ -14,7 +14,7 @@ module.exports = new LmsStrategy({
     instituteId: secrets.LMS_INSTITUTE_ID,
     applicationId: secrets.LMS_APPLICATION_ID,
     deviceId: secrets.LMS_DEVICE_ID
-}, async function (accessToken, profile, cb) {
+}, async (accessToken, profile, cb) => {
     let profileJson = JSON.parse(profile)
     Raven.setContext({extra: {file: 'lmsstrategy'}})
     try{

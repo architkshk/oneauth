@@ -14,7 +14,7 @@ module.exports = new GoogleStrategy({
         callbackURL: config.SERVER_URL + config.GOOGLE_CALLBACK,
         passReqToCallback: true,
         scope: ['email', 'profile']
-    }, async function (req, accessToken, refreshToken, profile, cb) {
+    }, async (req, accessToken, refreshToken, profile, cb) => {
         let profileJson = profile._json
         let oldUser = req.user
         profileJson.username = profileJson.emails[0].value.split('@')[0] //Pre-@ part of first email

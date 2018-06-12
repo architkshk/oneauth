@@ -1,4 +1,4 @@
-function makeGaEvent(act, cat, lbl) {
+makeGaEvent = (act, cat, lbl) => {
     return ((req, res, next) => {
         req.ga.event({
             action: act,

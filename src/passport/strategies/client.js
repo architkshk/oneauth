@@ -18,7 +18,7 @@ const Raven = require('raven')
  * @param clientSecret
  * @param done
  */
-const verifyClient = async function (clientId, clientSecret, done) {
+const verifyClient = async (clientId, clientSecret, done) => {
     try {
         const client = await models.Client.findOne({
             where: {id: clientId}
