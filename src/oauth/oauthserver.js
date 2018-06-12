@@ -6,7 +6,7 @@ const oauth = require('oauth2orize')
 
 const models = require('../db/models').models
     , generator = require('../utils/generator')
-    , matchURL = require('../utils/wildcardmatch')
+    , matchURL = require('../utils/wildcardmatch').matchURL
     , passport = require('../passport/passporthandler')
     , config = require('../../config')
     , debug = require('debug')('oauth:oauthserver')
