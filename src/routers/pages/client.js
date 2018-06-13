@@ -7,18 +7,6 @@ const acl = require('../../middlewares/acl')
 
 const models = require('../../db/models').models
 
-router.get('/me',
-    cel.ensureLoggedIn('/login'),
-    (req, res, next) => {
-        models.Client.findAll({
-            where: {userId: req.user.id}
-        }).then(clients => res.render('client/all', {clients: clients}))
-        .catch(err => {
-            res.send("No clients registered")
-        })
-    }
-)
-
 router.get('/',acl.ensureAdmin, (req,res,next) => {
     models.Client.findAll({})
         .then(clients => res.render('client/all',{clients:clients}))
