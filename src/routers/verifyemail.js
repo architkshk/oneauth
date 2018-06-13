@@ -51,9 +51,7 @@ router.post('/', cel.ensureLoggedIn('/login'), makeGaEvent('submit', 'form', 've
                     id: req.user.id
                 }
             })
-            .then(() => {
-                return models.User.findOne({where: {email: req.body.email, id: req.user.id}})
-            })
+            .then(() => models.User.findOne({where: {email: req.body.email, id: req.user.id}}))
     }
 
     user.then((user) => {
@@ -70,9 +68,7 @@ router.post('/', cel.ensureLoggedIn('/login'), makeGaEvent('submit', 'form', 've
             userId: user.dataValues.id,
             include: [models.User]
         })
-            .then((entry) => {
-                return mail.verifyEmail(user.dataValues, entry.key)
-            })
+            .then((entry) =>  mail.verifyEmail(user.dataValues, entry.key))
 
     })
         .then((dataValue) => {

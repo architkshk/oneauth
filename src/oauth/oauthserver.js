@@ -19,7 +19,7 @@ server.serializeClient( (client, done) => {
 server.deserializeClient( (clientId, done) => {
     models.Client.findOne({
         where: {id: clientId}
-    }).then( (client) => {
+    }).then(client => {
         return done(null, client)
     }).catch(err => debug(err))
 })
@@ -53,12 +53,8 @@ server.grant(oauth.grant.token(
             explicit: false,
             clientId: client.id,
             userId: user.id
-        }).then( (authToken) => {
-            return done(null, authToken.token)
-        }).catch( (err) => {
-            return done(err)
-        })
-
+        }).then(authToken => done(null, authToken.token))
+        .catch(err => done(err))
     }
 ))
 
@@ -71,7 +67,7 @@ server.exchange(oauth.exchange.code(
         models.GrantCode.findOne({
             where: {code: code},
             include: [models.Client]
-        }).then((grantCode) => {
+        }).then(grantCode => {
             if (!grantCode) {
                 return done(null, false) // Grant code does not exist
             }
@@ -101,7 +97,7 @@ server.exchange(oauth.exchange.code(
                 }
             }).spread( (authToken, created) => {
                 return done(null, authToken.token)
-            }).catch( (err) => {
+            }).catch( err => {
                 return done(err)
             })
 
@@ -121,7 +117,7 @@ const authorizationMiddleware = [
         debug('oauth: authorize')
         models.Client.findOne({
             where: {id: clientId}
-        }).then( (client) => {
+        }).then(client => {
             if (!client) {
                 return done(null, false)
             }
@@ -144,13 +140,13 @@ const authorizationMiddleware = [
                 clientId: client.id,
                 userId: user.id
             }
-        }).then( (authToken) => {
+        }).then(authToken => {
             if (!authToken) {
                 return done(null, false)
             } else {
                 return done(null, true)
             }
-        }).catch( (err) => {
+        }).catch(err => {
             return done(err)
         })
 
@@ -174,7 +170,7 @@ server.exchange(oauth.exchange.clientCredentials((client, scope, done) => {
   models.Client.findOne({
       where: {id: client.get().id}
   })
- .then((localClient) => {
+ .then(localClient => {
     if (!localClient) {
         return done(null, false);
     }
@@ -197,15 +193,9 @@ server.exchange(oauth.exchange.clientCredentials((client, scope, done) => {
          explicit: false,
          clientId: client.get().id,
          userId: null // This is a client scoped token, so no related user here
-     }).then((Authtoken) => {
-      return done(null , Authtoken.get().token)
-     })
-       .catch((err) => {
-         return done(err)
-     });
- }).catch((err) => {
-     return done(err)
- })
+     }).then(Authtoken => done(null , Authtoken.get().token))
+       .catch(err => done(err));
+ }).catch(err => done(err))
 }));
 
 const decisionMiddleware = [

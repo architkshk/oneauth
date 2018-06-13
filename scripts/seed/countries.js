@@ -4,7 +4,7 @@ const {db, models: {
         Country
     }} = require('../../src/db/models');
 
-async function runSeed() {
+const runSeed = async () => {
     try {
         await db.sync()
         await Country.create({name: 'India', id: 'IN'})

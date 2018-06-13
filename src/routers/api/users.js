@@ -43,12 +43,12 @@ router.get('/me',
             models.User.findOne({
                 where: {id: req.user.id},
                 include: includes
-            }).then( (user) => {
+            }).then(user => {
                 if (!user) {
                     throw new Error("User not found")
                 }
                 res.send(user)
-            }).catch( (err) => {
+            }).catch(err => {
                 res.send('Unknown user or unauthorized request')
             })
 
@@ -93,13 +93,13 @@ router.get('/me/address',
             models.User.findOne({
                 where: {id: req.user.id},
                 include: includes
-            }).then( (user) => {
+            }).then(user => {
                 console.log(user)
                 if (!user) {
                     throw new Error("User not found")
                 }
                 res.send(user)
-            }).catch( (err) => {
+            }).catch(err => {
                 res.send('Unknown user or unauthorized request')
             })
 
@@ -123,7 +123,7 @@ router.get('/me/logout',
                     'user_id': req.user.id,
                     'logout': 'success'
                 })
-            }).catch( (err) => {
+            }).catch(err => {
                 res.status(501).send(err)
             })
         } else {
@@ -146,12 +146,12 @@ router.get('/:id',
             // But for trusted clients we will pull down our pants
             attributes: trustedClient ? undefined: ['id', 'username', 'photo'],
             where: {id: req.params.id}
-        }).then( (user) => {
+        }).then( user => {
             if (!user) {
                 throw new Error("User not found")
             }
             res.send(user)
-        }).catch( (err) => {
+        }).catch(err => {
             res.send('Unknown user or unauthorized request')
         })
     }
@@ -167,12 +167,12 @@ router.get('/:id/address',
         models.Address.findAll({
             where: {'$demographic.userId$': req.params.id},
             include: includes
-        }).then( (addresses) => {
+        }).then(addresses => {
             if (!addresses || addresses.length === 0) {
                 throw new Error("User has no addresses")
             }
             return res.json(addresses)
-        }).catch( (err) => {
+        }).catch(err => {
             Raven.captureException(err)
             req.flash('error', 'Something went wrong trying to query address database')
             return res.status(501).json({error: err.message})

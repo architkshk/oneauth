@@ -35,7 +35,7 @@ router.post('/add', (req, res) => {
         domain: clientDomains,
         callbackURL: clientCallbacks,
         userId: req.user.id
-    }).then( (client) => {
+    }).then(client => {
         res.redirect('/clients/' + client.id)
     }).catch(err => console.log(err))
 })
@@ -66,9 +66,9 @@ router.post('/edit/:id', cel.ensureLoggedIn('/login'),
             trusted:trustedClient
         }, {
             where: {id: clientId}
-        }).then( (client) => {
+        }).then( client => {
             res.redirect('/clients/' + clientId)
-        }).catch( (error) => {
+        }).catch(error => {
             console.error(error)
         })
 

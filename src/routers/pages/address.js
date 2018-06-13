@@ -10,9 +10,8 @@ router.get('/',
         models.Address.findAll({
             where: {'$demographic.userId$': req.user.id},
             include: [models.Demographic]
-        }).then( (addresses) => {
-            return res.render('address/all', {addresses})
-        }).catch( (err) => {
+        }).then(addresses => res.render('address/all', {addresses}))
+        .catch(err => {
             Raven.captureException(err)
             req.flash('error', 'Something went wrong trying to query address database')
             return res.redirect('/users/me')
@@ -28,7 +27,7 @@ router.get('/add',
             models.Country.findAll({})
         ]).then( ([states, countries]) => {
             return res.render('address/add', {states, countries})
-        }).catch( (err) => {
+        }).catch(err => {
             res.send("Error Fetching Data.")
         })
     }
@@ -49,7 +48,7 @@ router.get('/:id',
                 return res.redirect('.')
             }
             return res.render('address/id', {address})
-        }).catch((err) => {
+        }).catch(err => {
             Raven.captureException(err)
             req.flash('error', 'Something went wrong trying to query address database')
             return res.redirect('/users/me')
@@ -77,7 +76,7 @@ router.get('/:id/edit',
                 return res.redirect('.')
             }
             return res.render('address/edit', {address, states, countries})
-        }).catch((err) => {
+        }).catch(err => {
             Raven.captureException(err)
             req.flash('error', 'Something went wrong trying to query address database')
             return res.redirect('/users/me')

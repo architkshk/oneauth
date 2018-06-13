@@ -6,7 +6,7 @@ const ensureAdmin = (req, res, next) => {
     }
 }
 
-const ensureRole = (role) => {
+const ensureRole = role => {
     return function (req, res, next) {
         if (req.user.role === role) {
             next()

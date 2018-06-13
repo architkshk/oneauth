@@ -12,9 +12,8 @@ router.get('/me',
     (req, res, next) => {
         models.Client.findAll({
             where: {userId: req.user.id}
-        }).then( (clients) => {
-            return res.render('client/all', {clients: clients})
-        }).catch( (err) => {
+        }).then(clients => res.render('client/all', {clients: clients}))
+        .catch(err => {
             res.send("No clients registered")
         })
     }
@@ -22,9 +21,8 @@ router.get('/me',
 
 router.get('/',acl.ensureAdmin, (req,res,next) => {
     models.Client.findAll({})
-        .then( (clients) => {
-            return res.render('client/all',{clients:clients})
-        }).catch((err) => {
+        .then(clients => res.render('client/all',{clients:clients}))
+        .catch(err => {
             res.send("No clients Registered")
     })
 })
@@ -41,7 +39,7 @@ router.get('/:id',
     (req, res, next) => {
         models.Client.findOne({
             where: {id: req.params.id}
-        }).then( (client) => {
+        }).then(client => {
             if (!client) {
                 return res.send("Invalid Client Id")
             }
@@ -60,7 +58,7 @@ router.get('/:id/edit',
     (req, res, next) => {
         models.Client.findOne({
             where: {id: req.params.id}
-        }).then( (client) => {
+        }).then(client => {
             if (!client) {
                 return res.send("Invalid Client Id")
             }

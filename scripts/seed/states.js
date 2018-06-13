@@ -6,7 +6,7 @@ const {db, models: {
         State
     }} = require('../../src/db/models');
 
-async function runSeed() {
+const runSeed = async () => {
     try {
         // await db.sync()
         const country = await Country.findOne({where: {id: 'IN'}})

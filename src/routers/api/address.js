@@ -32,7 +32,7 @@ router.post('/', cel.ensureLoggedIn('/login'), (req, res) => {
             // if no addresses, then first one added is primary
             primary: !demographics.get().addresses
         }))
-            .then((address) => {
+            .then(address => {
                 if (req.body.returnTo) {
                     res.redirect(req.body.returnTo)
                 } else{

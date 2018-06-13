@@ -4,7 +4,7 @@ const {db, models: {
     User
 }} = require('../../src/db/models');
 
-async function runPrune() {
+const runPrune = async () => {
     try {
 
         const [users, result] = await db.query(`

@@ -34,9 +34,9 @@ router.post('/username', makeGaEvent('submit', 'form', 'forgot.username'), (req,
     }
 
     models.User.findAll({where: {email: req.body.email}})
-        .then((users) => Promise.all(users.map(user =>
+        .then(users => Promise.all(users.map(user =>
             mail.forgotUserEmail(user.dataValues))
-        )).then((dataValues) => {
+        )).then(dataValues => {
 
         if (dataValues.length) {
             return res.redirect('/forgot/username/inter')
@@ -48,7 +48,7 @@ router.post('/username', makeGaEvent('submit', 'form', 'forgot.username'), (req,
             return res.redirect('/forgot/username')
         }
 
-    }).catch((err) => {
+    }).catch(err => {
         Raven.captureException(err)
         console.error(err)
         req.flash('error', 'Something went wrong. Please try again.')
@@ -75,16 +75,16 @@ router.post('/password', makeGaEvent('submit', 'form', 'resetpassword'), (req, r
         where: {
             email: req.body.email
         }
-    }).then((users) =>
+    }).then(users =>
         Promise.all(users.map(user => models.Resetpassword.create({
                 key: uid(15),
                 userId: user.dataValues.id,
                 include: [models.User]
-            }).then((entry) =>
+            }).then(entry =>
                 mail.forgotPasswordEmail(user.dataValues, entry.key)
             )
         ))
-    ).then((dataValues) => {
+    ).then(dataValues => {
 
         if (dataValues.length) {
             return res.redirect('/forgot/password/inter')
@@ -95,7 +95,7 @@ router.post('/password', makeGaEvent('submit', 'form', 'resetpassword'), (req, r
             return res.redirect('/forgot/password')
         }
 
-    }).catch( (err) => {
+    }).catch(err => {
         Raven.captureException(err)
         console.error(err.toString())
         req.flash('error', 'Something went wrong. Please try again with your registered email.')
@@ -127,7 +127,7 @@ router.post('/password/new', makeGaEvent('submit', 'form', 'forgot.password.new'
 
   models.Resetpassword.findOne({where: {key: req.body.key}})
 
-    .then((resetEntry) => {
+    .then(resetEntry => {
 
       if (!resetEntry) {
         req.flash('error', 'Invalid key. please try again.')
@@ -139,12 +139,9 @@ router.post('/password/new', makeGaEvent('submit', 'form', 'forgot.password.new'
         return models.UserLocal.findOne({
           where: {userId: resetEntry.dataValues.userId}
         })
-          .then( (userlocal) => {
-
+          .then(userlocal => {
             let passhash = passutils.pass2hash(req.body.password)
-
             return Promise.all([userlocal, passhash])
-
           })
           .then(([userlocal, passhash]) => {
 
@@ -166,21 +163,14 @@ router.post('/password/new', makeGaEvent('submit', 'form', 'forgot.password.new'
 
             }
           )
-          .then((userlocal) => {
-
-            return models.Resetpassword.update({
+          .then(userlocal => models.Resetpassword.update({
                 deletedAt: moment().format()
               },
               {
                 where: {userId: resetEntry.dataValues.userId, key: resetEntry.dataValues.key}
               }
-            )
-
-
-          })
-          .then(() => {
-            return res.redirect('/login')
-          })
+            ))
+          .then(() => res.redirect('/login'))
 
       }
       else {
@@ -202,7 +192,7 @@ router.post('/password/new', makeGaEvent('submit', 'form', 'forgot.password.new'
       }
 
     })
-    .catch( (err) => {
+    .catch(err => {
       // Could not register user
       Raven.captureException(err)
       debug(err)

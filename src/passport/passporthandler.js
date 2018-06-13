@@ -40,13 +40,15 @@ passport.deserializeUser((userid, cb) => {
     }
     models.User.findOne({
         where: {id: userid}
-    }).then( (user) => {
+    }).then(user => {
         if (process.env.ONEAUTH_DEV === 'localhost') {
             user.role = 'admin'
         }
 
         return cb(null, user)
-    }).catch((err) => debug(err))
+    }).catch(err => {
+        debug(err)
+    })
 })
 
 module.exports = passport

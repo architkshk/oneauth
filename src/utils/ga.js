@@ -4,8 +4,7 @@ const makeGaEvent = (act, cat, lbl) => {
             action: act,
             category: cat,
             label: lbl
-        }, e => {
-        })
+        }, e => {})
         next()
     })
 }

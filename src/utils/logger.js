@@ -17,9 +17,7 @@ const GrayLogger = new WinstonGraylog2({
     silent: false,
     handleExceptions: true,
 
-    prelog: (msg) => {
-        return msg.trim()
-    },
+    prelog: msg =>  msg.trim(),
 
     graylog: {
         servers: [{host: GRAYLOG_HOST, port: GRAYLOG_PORT}],

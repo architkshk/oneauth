@@ -8,7 +8,7 @@ sgMail.setSubstitutionWrappers('{{', '}}')
 const senderEmail = config.EMAIL_SENDER_ADDR
 
 
-const welcomeEmail = (user) => {
+const welcomeEmail = user => {
 
     let msgTemplate = {}
     msgTemplate.template_id = config.WELCOME_EMAIL
@@ -79,7 +79,7 @@ const forgotPassEmail = (user, key) => {
 
 //Send a Single Email to Single or Multiple Recipients where they don't see each others email addresses
 
-const verifyEmailPrivate = (userEmails) => {
+const verifyEmailPrivate = userEmails => {
 
     let msgTemplate = {}
     msgTemplate.template_id = config.VERIFY_EMAIL
@@ -92,16 +92,14 @@ const verifyEmailPrivate = (userEmails) => {
             //  console.log('mail sent');
         })
         .catch(error => {
-
             Raven.captureException(error)
             console.error(error.toString())
-
         })
 
 
 }
 
-const forgotUsernameEmail = (user) => {
+const forgotUsernameEmail = user => {
     let msgTemplate = {}
     msgTemplate.template_id = config.FORGOT_USER_EMAIL
     msgTemplate.from = senderEmail

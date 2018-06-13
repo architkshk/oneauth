@@ -24,8 +24,6 @@ const deleteObject = (bucket, key) => {
     })
 }
 
-
-
 module.exports = {
     minioClient,
     deleteObject

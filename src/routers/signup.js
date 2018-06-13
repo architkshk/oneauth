@@ -30,13 +30,13 @@ router.post('/', makeGaEvent('submit', 'form', 'signup'), (req, res) => {
     }
 
     models.User.findOne({where: {username: req.body.username}})
-        .then((user) => {
+        .then(user=> {
             if (user) {
                 req.flash('error', 'Username already exist\'s. Please try again.')
                 return res.redirect('/signup')
             }
             passutils.pass2hash(req.body.password)
-                .then( (passhash) => {
+                .then(passhash=> {
                     models.UserLocal.create({
                         user: {
                             username: req.body.username,
@@ -53,15 +53,13 @@ router.post('/', makeGaEvent('submit', 'form', 'signup'), (req, res) => {
                         include: [
                             {model: models.User, include: [models.Demographic]}
                         ]
-                    }).then( (user) => {
-
+                    }).then(user => {
                         mail.welcomeEmail(user.user.dataValues)
-
                         res.redirect('/login')
                     })
                 })
         })
-        .catch( (err) => {
+        .catch(err=> {
             // Could not register user
             req.flash('error', 'Unsuccessful registration. Please try again.')
             return res.redirect('/signup')

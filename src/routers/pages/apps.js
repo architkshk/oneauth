@@ -12,9 +12,8 @@ router.get('/',
         models.AuthToken.findAll({
             where: {userId: req.user.id},
             include: [models.Client]
-        }).then( (apps) => {
-            return res.render('apps/all', {apps: apps})
-        }).catch( (err) => {
+        }).then(apps => res.render('apps/all', {apps: apps})
+        .catch(err => {
             res.send("No clients registered")
         })
     }
@@ -27,7 +26,7 @@ router.get('/:clientId/delete',cel.ensureLoggedIn('/login'),
                 userId: req.user.id,
                 clientId: +req.params.clientId
             }
-        }).then( (token) => {
+        }).then(token => {
             if (!token) {
                 return res.send("Invalid App")
             }

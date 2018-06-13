@@ -31,12 +31,12 @@ router.get('/me',
                     ]
                 }
             ]
-        }).then( (user) => {
+        }).then(user => {
             if (!user) {
                 res.redirect('/login')
             }
             return res.render('user/me', {user: user})
-        }).catch( (err) => {
+        }).catch(err => {
             throw err
         })
 
@@ -66,7 +66,7 @@ router.get('/me/edit',
                 res.redirect('/login')
             }
             return res.render('user/me/edit', {user, colleges, branches})
-        }).catch( (err) => {
+        }).catch(err => {
             throw err
         })
 
@@ -78,7 +78,7 @@ router.post('/me/edit',
 
     (req, res, next) => {
         var upload = multer.upload.single('userpic')
-        upload(req, res,  (err) => {
+        upload(req, res, err => {
             if(err) {
                 if (err.message === 'File too large') {
                     req.flash('error', 'Profile photo size exceeds 2 MB')
@@ -179,12 +179,12 @@ router.get('/:id',
                 models.UserLms,
                 models.UserTwitter
             ]
-        }).then( (user) => {
+        }).then(user => {
             if (!user) {
                 return res.status(404).send({error: "Not found"})
             }
             return res.render('user/id', {user: user})
-        }).catch( (err) => {
+        }).catch(err => {
             throw err
         })
     }
@@ -197,12 +197,12 @@ router.get('/:id/edit',
 
         models.User.findOne({
             where: {id: req.params.id},
-        }).then( (user) => {
+        }).then(user => {
             if (!user) {
                 return res.status(404).send({error: "Not found"})
             }
             return res.render('user/id/edit', {user: user})
-        }).catch( (err) => {
+        }).catch(err => {
             throw err
         })
     }
@@ -222,9 +222,8 @@ router.post('/:id/edit',
             {
                 where: {id: req.params.id},
                 returning: true
-            }).then( (result) => {
-            return res.redirect('../' + req.params.id)
-        }).catch( (err) => {
+            }).then(result => res.redirect('../' + req.params.id))
+            .catch(err => {
             throw err
         })
     }

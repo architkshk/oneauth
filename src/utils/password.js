@@ -9,13 +9,9 @@ const saltRounds = config.BCRYPT_SALT_ROUNDS
 /**
  * Returns promise
  */
-const pass2hash =  (pass)  => {
-    return bcrypt.hash(pass, saltRounds)
-}
+const pass2hash =  pass  => bcrypt.hash(pass, saltRounds);
 
-const compare2hash = (pass, hash) => {
-    return bcrypt.compare(pass, hash)
-}
+const compare2hash = (pass, hash) => bcrypt.compare(pass, hash)
 
 module.exports = {
     pass2hash, compare2hash

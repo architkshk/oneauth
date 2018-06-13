@@ -14,7 +14,7 @@ const bearerStrategy = new BearerStrategy(
         models.AuthToken.findOne({
             where: {token: token},
             include: [models.User, models.Client]
-        }).then( (authToken) => {
+        }).then( authToken => {
             if (!authToken) {
                 return done(null, false)
             }
@@ -36,7 +36,7 @@ const bearerStrategy = new BearerStrategy(
             }
 
             return done(null, null, info)
-        }).catch((err) => debug(err))
+        }).catch(err => debug(err))
     })
 
 module.exports = {

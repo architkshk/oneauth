@@ -10,7 +10,7 @@ router.get('/', makeGaEvent('submit', 'form', 'logout'), (req, res) => {
     const redirectUrl = req.query.redirect || req.session.returnTo || '/login'
     req.user = null
     req.logout()
-    req.session.destroy( (err) => {
+    req.session.destroy( err => {
         if (err) Raven.captureException(err)
         res.clearCookie('oneauth', {path: '/', domain: 'account.codingblocks.com', httpOnly: true})
         res.clearCookie('oneauth', {path: '/', domain: config.COOKIE_DOMAIN, httpOnly: true})
