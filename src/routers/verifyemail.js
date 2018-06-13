@@ -54,7 +54,7 @@ router.post('/', cel.ensureLoggedIn('/login'), makeGaEvent('submit', 'form', 've
             .then(() => models.User.findOne({where: {email: req.body.email, id: req.user.id}}))
     }
 
-    user.then((user) => {
+    user.then(user => {
 
         if (!user) {
             return user
@@ -68,10 +68,10 @@ router.post('/', cel.ensureLoggedIn('/login'), makeGaEvent('submit', 'form', 've
             userId: user.dataValues.id,
             include: [models.User]
         })
-            .then((entry) =>  mail.verifyEmail(user.dataValues, entry.key))
+            .then(entry =>  mail.verifyEmail(user.dataValues, entry.key))
 
     })
-        .then((dataValue) => {
+        .then(dataValue => {
 
             if (dataValue) {
                 return res.redirect('/verifyemail/inter')
@@ -81,7 +81,7 @@ router.post('/', cel.ensureLoggedIn('/login'), makeGaEvent('submit', 'form', 've
                 return res.redirect('/users/me')
             }
         })
-        .catch( (err) => {
+        .catch(err => {
             Raven.captureException(err)
             console.error(err.toString())
             req.flash('error', 'Something went wrong. Please try again with your registered email.')
@@ -158,7 +158,7 @@ router.get('/key/:key',  (req, res) => {
                 return
             }
         })
-        .then((verifiedemail) => {
+        .then(verifiedemail => {
 
             if (verifiedemail) {
                 req.flash('info', 'Your email is verified. Thank you.')
@@ -169,7 +169,7 @@ router.get('/key/:key',  (req, res) => {
             }
 
         })
-        .catch((err) => {
+        .catch(err => {
             Raven.captureException(err)
             console.error(err.toString())
             req.flash('error', 'There was some problem verifying your email. Please try again.')

@@ -123,9 +123,7 @@ router.get('/me/logout',
                     'user_id': req.user.id,
                     'logout': 'success'
                 })
-            }).catch(err => {
-                res.status(501).send(err)
-            })
+            }).catch(err => res.status(501).send(err))
         } else {
             res.status(403).send("Unauthorized")
         }
@@ -151,9 +149,8 @@ router.get('/:id',
                 throw new Error("User not found")
             }
             res.send(user)
-        }).catch(err => {
-            res.send('Unknown user or unauthorized request')
-        })
+        }).catch(err => res.send('Unknown user or unauthorized request')
+        )
     }
 )
 router.get('/:id/address',

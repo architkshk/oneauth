@@ -12,7 +12,7 @@ router.get('/',
         models.AuthToken.findAll({
             where: {userId: req.user.id},
             include: [models.Client]
-        }).then(apps => res.render('apps/all', {apps: apps})
+        }).then(apps => res.render('apps/all', {apps: apps}))
         .catch(err => {
             res.send("No clients registered")
         })

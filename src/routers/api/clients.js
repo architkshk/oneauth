@@ -68,10 +68,7 @@ router.post('/edit/:id', cel.ensureLoggedIn('/login'),
             where: {id: clientId}
         }).then( client => {
             res.redirect('/clients/' + clientId)
-        }).catch(error => {
-            console.error(error)
-        })
-
+        }).catch(error => console.error(error))
     })
 
 

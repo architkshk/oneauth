@@ -17,9 +17,7 @@ router.get('/',acl.ensureAdmin, (req,res,next) => {
 
 router.get('/add',
     cel.ensureLoggedIn('/login'),
-    (req, res, next) => {
-        return res.render('client/add')
-    }
+    (req, res, next) => res.render('client/add')
 )
 
 router.get('/:id',
@@ -34,7 +32,6 @@ router.get('/:id',
             if (client.userId != req.user.id) {
                 return res.send("Unauthorized user")
             }
-
             return res.render('client/id', {client: client})
         })
     }

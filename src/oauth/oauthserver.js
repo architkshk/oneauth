@@ -12,16 +12,13 @@ const models = require('../db/models').models
 
 const server = oauth.createServer()
 
-server.serializeClient( (client, done) => {
-    return done(null, client.id)
-})
+server.serializeClient( (client, done) => done(null, client.id))
 
 server.deserializeClient( (clientId, done) => {
     models.Client.findOne({
         where: {id: clientId}
-    }).then(client => {
-        return done(null, client)
-    }).catch(err => debug(err))
+    }).then(client => done(null, client))
+    .catch(err => debug(err))
 })
 
 /**
@@ -35,11 +32,8 @@ server.grant(oauth.grant.code(
             code: generator.genNcharAlphaNum(config.GRANT_TOKEN_SIZE),
             clientId: client.id,
             userId: user.id
-        }).then((grantCode) => {
-            return done(null, grantCode.code)
-        }).catch( (err) => {
-            return done(err)
-        })
+        }).then(grantCode => done(null, grantCode.code))
+        .catch(err => done(err))
     }
 ))
 /**
@@ -95,11 +89,8 @@ server.exchange(oauth.exchange.code(
                     clientId: grantCode.clientId,
                     userId: grantCode.userId
                 }
-            }).spread( (authToken, created) => {
-                return done(null, authToken.token)
-            }).catch( err => {
-                return done(err)
-            })
+            }).spread( (authToken, created) => done(null, authToken.token))
+            .catch( err => done(err))
 
             //Make sure to delete the grant code
             //so it cannot be reused
@@ -146,9 +137,7 @@ const authorizationMiddleware = [
             } else {
                 return done(null, true)
             }
-        }).catch(err => {
-            return done(err)
-        })
+        }).catch(err => done(err))
 
     }),
     (req, res) => {
