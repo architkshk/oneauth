@@ -86,8 +86,8 @@ const Client = db.define('client', {
     secret: Sequelize.DataTypes.STRING,
     domain: Sequelize.DataTypes.ARRAY(Sequelize.DataTypes.STRING),
     callbackURL: Sequelize.DataTypes.ARRAY(Sequelize.DataTypes.STRING),
-    trusted: {type: Sequelize.DataTypes.BOOLEAN, default: false}
-
+    trusted: {type: Sequelize.DataTypes.BOOLEAN, default: false},
+    defaultURL: Sequelize.DataTypes.ARRAY(Sequelize.DataTypes.STRING)
 })
 
 Client.belongsTo(User)
