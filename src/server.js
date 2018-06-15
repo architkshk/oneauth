@@ -13,6 +13,7 @@ const express = require('express')
     , flash = require('express-flash')
     , Raven = require('raven')
     , debug = require('debug')('oneauth:server')
+    , sassMiddleware = require('node-sass-middleware');
 
 const config = require('../config')
     , secrets = config.SECRETS
@@ -69,6 +70,14 @@ app.engine('hbs', exphbs.express4({
 }))
 app.set('views', path.join(__dirname, '../views'))
 app.set("view engine", "hbs")
+
+app.use(sassMiddleware({
+    src: path.join(__dirname, '../motley/sass/styles'),
+    dest: path.join(__dirname, '../public_static/css'),
+    debug: true,
+    outputStyle: 'compressed',
+    prefix: '/css'
+}));
 
 app.use(expressLogger)
 app.use(express.static(path.join(__dirname, '../public_static')))
