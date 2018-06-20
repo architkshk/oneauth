@@ -9,7 +9,6 @@ const models = require('../../../db/models').models
 const config = require('../../../../config')
 const secrets = config.SECRETS
 const passutils = require('../../../utils/password')
-const tracer = require('../../../utils/ddtracer').tracer
 const debug = require('debug')('oauth:strategy:facebook')
 
 
@@ -29,9 +28,14 @@ module.exports = new FacebookStrategy({
     let oldUser = req.user
     // DATADOG TRACE: START SPAN
     Raven.setContext({extra: {file: 'fbstrategy'}})
-    const span = tracer.startSpan('passport.strategy.facebook')
+
     try{
-        if(oldUser){
+        if(oldUser) {
+            /*
+            This means an already logged in users is trying to
+            connect Facebook to his account. Let us see if there
+            are any connections to his facebook already
+             */
             const fbaccount = await  models.UserFacebook.findOne({where: {id: profileJson.id}})
 
             if (fbaccount) {
@@ -65,11 +69,50 @@ module.exports = new FacebookStrategy({
                     return cb(err, null,{message: "Could not retrieve existing Twitter linked account"})
                 }
             }
-        }else{
-            const [userFacebook,created] = await  models.UserFacebook.findCreateFind({
+        } else {
+            /*
+            This means either -
+                a. This is a new signup via Facebook
+                b. Someone is trying to login via Facebook
+             */
+            let userFacebook = await models.UserFacebook.findOne({
                 include: [models.User],
-                where: {id: profileJson.id},
-                defaults: {
+                where: {id: profileJson.id}
+            })
+            /*
+            if userFacebook exists then
+            Case (a): Logging in
+             */
+
+            if (!userFacebook) {
+                /*
+                Case (b): New Signup
+                First ensure there aren't already users with the same email
+                id that comes from facebook
+                 */
+                const existingUsers = await models.User.findAll({
+                    include: [{
+                        model: models.UserFacebook,
+                        attributes: ['id'],
+                        required: false
+                    }],
+                    where: {
+                        email: profileJson.email,
+                        '$userfacebook.id$': {$eq: null}
+                    }
+                })
+                if (existingUsers && existingUsers.length > 0) {
+                    let oldIds = existingUsers.map(eu => eu.id).join(',')
+                    return cb(null, false, {
+                        message: `
+                    Your email id "${profileJson.email}" is already used in the following Coding Blocks Account(s): 
+                    [ ${oldIds} ]
+                    Please log into your old account and connect Facebook in it instead.
+                    Use 'Forgot Password' option if you do not remember password of old account`
+                    })
+                }
+
+                userFacebook = await models.UserFacebook.create({
                     id: profileJson.id,
                     accessToken: authToken,
                     refreshToken: refreshToken,
@@ -81,28 +124,17 @@ module.exports = new FacebookStrategy({
                         email: profileJson.email,
                         photo: "https://graph.facebook.com/" + profileJson.id + "/picture?type=large"
                     }
-                }
-            })
-
-            if (!userFacebook) {
-                return cb(null, false, {message: 'Authentication Failed'})
-            }
-
-            setImmediate(() => {
-                span.addTags({
-                    resource: req.path,
-                    type: 'web',
-                    'span.kind': 'server',
-                    userId: userFacebook && userFacebook.user && userFacebook.user.id,
-                    newUser: true,
-                    facebookId: profileJson.id
+                }, {
+                    include: [models.User],
                 })
-                span.finish()
-            })
+                if (!userFacebook) {
+                    return cb(null, false, {message: 'Authentication Failed'})
+                }
+            }
             return cb(null, userFacebook.user.get())
 
         }
-    }catch (err) {
+    } catch (err) {
         Raven.captureException(err)
         return cb(null,false,{message:err.message})
     }
