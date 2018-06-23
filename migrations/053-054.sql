@@ -1,0 +1,1 @@
+alter table session add column ip varchar(255);
