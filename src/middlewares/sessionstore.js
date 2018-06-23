@@ -11,12 +11,14 @@ const sessions = db.define('session', {
     },
     userId: Sequelize.STRING,
     expires: Sequelize.DATE,
-    data: Sequelize.STRING(50000)
-})
+    data: Sequelize.STRING(50000),
+    ip: Sequelize.STRING
+})         
 const extendDefaultFields = (defaults, session) => ({
     data: defaults.data,
     expires: defaults.expires,
-    userId: session.passport && session.passport.user
+    userId: session.passport && session.passport.user,
+    ip: session.ip
 })
 const sessionStore = new SequelizeSessionStore({
     db,

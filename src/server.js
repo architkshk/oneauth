@@ -83,8 +83,10 @@ app.use(session({
     saveUninitialized: true,
     name: 'oneauth',
     cookie: {
-        domain: config.COOKIE_DOMAIN
-    }
+        domain: config.COOKIE_DOMAIN,
+        maxAge: 604800000
+    },
+    proxy: true
 }))
 app.use(flash())
 app.use(passport.initialize())
@@ -93,6 +95,16 @@ app.use(setuserContext)
 app.use(redirectToHome)
 app.use(expressGa('UA-83327907-7'))
 app.use(datadogRouter)
+
+app.use(req=> {
+    const ip = req.headers['x-forwarded-for'].split(',').pop() || 
+    req.connection.remoteAddress || 
+    req.socket.remoteAddress || 
+    req.connection.socket.remoteAddress;
+    var sessData = req.session;
+    sessData.ip = ip
+})
+
 app.use('/login', loginrouter)
 app.use('/connect', connectrouter)
 app.use('/disconnect', disconnectrouter)
