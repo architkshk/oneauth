@@ -43,13 +43,15 @@ const User = db.define('user', {
 const Resetpassword = db.define('resetpassword', {
     id: {type: Sequelize.DataTypes.BIGINT, autoIncrement: true, primaryKey: true},
     key: {type: Sequelize.DataTypes.STRING, unique: true, allowNull: false},
-    deletedAt: {type: Sequelize.DATE}
+}, {
+    paranoid: true
 })
 
 const Verifyemail = db.define('verifyemail', {
     id: {type: Sequelize.DataTypes.BIGINT, autoIncrement: true, primaryKey: true},
     key: {type: Sequelize.DataTypes.STRING, unique: true, allowNull: false},
-    deletedAt: {type: Sequelize.DATE}
+}, {
+    paranoid: true
 })
 
 const UserLocal = db.define('userlocal', definitions.social.local)
@@ -86,8 +88,8 @@ const Client = db.define('client', {
     secret: Sequelize.DataTypes.STRING,
     domain: Sequelize.DataTypes.ARRAY(Sequelize.DataTypes.STRING),
     callbackURL: Sequelize.DataTypes.ARRAY(Sequelize.DataTypes.STRING),
-    trusted: {type: Sequelize.DataTypes.BOOLEAN, default: false}
-
+    trusted: {type: Sequelize.DataTypes.BOOLEAN, default: false},
+    defaultURL: {type: Sequelize.DataTypes.STRING, allowNull:false, default: 'https://codingblocks.com/'},
 })
 
 Client.belongsTo(User)

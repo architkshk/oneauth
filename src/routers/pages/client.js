@@ -7,18 +7,6 @@ const acl = require('../../middlewares/acl')
 
 const models = require('../../db/models').models
 
-router.get('/me',
-    cel.ensureLoggedIn('/login'),
-    function (req, res, next) {
-        models.Client.findAll({
-            where: {userId: req.user.id}
-        }).then(function (clients) {
-            return res.render('client/all', {clients: clients})
-        }).catch(function (err) {
-            res.send("No clients registered")
-        })
-    }
-)
 
 router.get('/',acl.ensureAdmin,function (req,res,next) {
     models.Client.findAll({})
@@ -69,6 +57,7 @@ router.get('/:id/edit',
             }
             client.clientDomains = client.domain.join(";")
             client.clientCallbacks = client.callbackURL.join(";")
+            client.clientdefaultURL = client.defaultURL;
 
             return res.render('client/edit', {client: client})
         })
