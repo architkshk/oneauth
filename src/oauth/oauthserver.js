@@ -79,7 +79,7 @@ server.exchange(oauth.exchange.code(
             if (client.id !== grantCode.client.id) {
                 return done(null, false) //Wrong Client ID
             }
-            let callbackMatch = matchURL(client.callbackURL,redirectURIredirectURI);
+            let callbackMatch = matchURL(client.callbackURL,redirectURI);
             if (!callbackMatch) {
                 return done(null, false) // Wrong redirect URI
             }
