@@ -7,8 +7,13 @@
             <div class="attributes">
                 <div class="row justify-content-between">
                     <div class="row no-gutters align-items-center justify-content-between detail-row">
+                        <div class="label-input col-md-4 col-sm-3">Label</div>
+                        <input class="input-text col-md-8 col-sm-8" type="text" placeholder="Home, Office etc" name="label"  value="{{address.label}}" required />
+                    </div>
+
+                    <div class="row no-gutters align-items-center justify-content-between detail-row">
                         <div class="label-input col-md-4 col-sm-3">First Name</div>
-                        <input class="input-text col-md-8 col-sm-8"  type="text" placeholder="First Name" name="first_name" value="{{address.first_name}}" required />
+                        <input class="input-text col-md-8 col-sm-8"  type="text" placeholder="First Name" name="first_name" value="{{address.first_name}}" />
                     </div>
 
                     <div class="row no-gutters align-items-center justify-content-between detail-row">
@@ -73,10 +78,6 @@
                         </select>
                     </div>
 
-                    <div class="row no-gutters align-items-center justify-content-between detail-row">
-                        <div class="label-input col-md-4 col-sm-3">Label</div>
-                        <input class="input-text col-md-8 col-sm-8" type="text" placeholder="Label" name="label"  value="{{address.label}}" required />
-                    </div>
                 </div>
 
                 <div class="row justify-content-end button-row">
