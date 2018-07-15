@@ -17,11 +17,11 @@ router.post('/', cel.ensureLoggedIn('/login'), function (req, res) {
             where: {userId: req.user.id},
             include: [models.Address]
         }).then(([demographics, created]) => models.Address.create({
-            label: req.body.label,
+            label: req.body.label||null,
             first_name: req.body.first_name,
             last_name: req.body.last_name,
             mobile_number: req.body.number,
-            whatsapp_number: req.body.whatsapp,
+            whatsapp_number: req.body.whatsapp||null,
             email: req.body.email,
             pincode: req.body.pincode,
             street_address: req.body.street_address,
@@ -69,11 +69,11 @@ router.post('/:id', cel.ensureLoggedIn('/login'), async function (req, res) {
             }
 
             await models.Address.update({
-                    label: req.body.label,
+                    label: req.body.label||null,
                     first_name: req.body.first_name,
                     last_name: req.body.last_name,
                     mobile_number: req.body.number,
-                    whatsapp_number: req.body.whatsapp,
+                    whatsapp_number: req.body.whatsapp||null,
                     email: req.body.email,
                     pincode: req.body.pincode,
                     street_address: req.body.street_address,

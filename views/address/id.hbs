@@ -9,10 +9,12 @@
 </div>
 <table class="table table-striped m-2">
     <tbody>
-    <tr>
-        <th scope="row">Label</th>
-        <td> {{address.label}}</td>
-    </tr>
+    {{#if address.label}}
+        <tr>
+            <th scope="row">Label</th>
+            <td> {{address.label}}</td>
+        </tr>
+    {{/if}}
     <tr>
         <th scope="row">First Name</th>
         <td> {{address.first_name}}</td>
@@ -25,10 +27,12 @@
         <th>Mobile Number</th>
         <td> {{address.mobile_number}}</td>
     </tr>
-    <tr>
-        <th>WhatsApp Number</th>
-        <td> {{address.whatsapp_number}}</td>
-    </tr>
+    {{#if address.whatsapp_number}}
+        <tr>
+            <th>WhatsApp Number</th>
+            <td> {{address.whatsapp_number}}</td>
+        </tr>
+    {{/if}}
     <tr>
         <th>E-mail</th>
         <td> {{address.email}}</td>
