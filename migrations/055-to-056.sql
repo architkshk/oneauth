@@ -1,0 +1,1 @@
+ALTER TABLE public.users ADD COLUMN whatsapp varchar(10) default null unique;

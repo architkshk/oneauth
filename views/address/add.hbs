@@ -12,7 +12,9 @@
               <div class="label-input col-md-4 col-sm-3">Label</div>
               <input class="input-text col-md-8 col-sm-8" type="text" placeholder="Home, Office etc" name="label" />
             </div>
-
+          </div>
+          
+          <div class="row justify-content-between">
             <div class="row no-gutters align-items-center justify-content-between detail-row">
               <div class="label-input col-md-4 col-sm-3">First Name</div>
               <input class="input-text col-md-8 col-sm-8"  type="text" placeholder="First Name" name="first_name" required />
@@ -30,6 +32,17 @@
               <input class="input-text col-md-8 col-sm-8" type="text" pattern="[0-9]{10}" maxlength="10" placeholder="Mobile Number" name="number" required />
             </div>
 
+            <div class="row no-gutters align-items-center justify-content-between detail-row">
+              <div class="label-input col-md-4 col-sm-3">WhatsApp No.</div>
+              <input class="input-text col-md-8 col-sm-8" type="text" pattern="[0-9]{10}" maxlength="10" placeholder="WhatsApp Number" name="whatsapp" />
+              <sub>
+                <input type="checkbox" id="whatsappcheck"> Same as Mobile No.
+              </sub>
+            </div>
+          </div>
+
+
+          <div class="row justify-content-between">
             <div class="row no-gutters align-items-center justify-content-between detail-row">
               <div class="label-input col-md-4 col-sm-3">Email</div>
               <input class="input-text col-md-8 col-sm-8" type="email" placeholder="E-mail" name="email" required />
@@ -102,4 +115,11 @@
         let url = params.get('returnTo')
         $('#redirect-input').val(url)
     })
+    $('#whatsappcheck').change(function () {
+      if ($(this).prop("checked")) {
+        $("input[name=whatsapp]").val($("input[name=number]").val());
+          return;
+      }
+      $("input[name=whatsapp]").val("")
+    });
 </script>
