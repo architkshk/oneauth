@@ -5,6 +5,7 @@ const oauth = require('oauth2orize')
     , cel = require('connect-ensure-login')
     , passport = require('../passport/passporthandler')
     , debug = require('debug')('oauth:oauthserver')
+    , matchURL = require('../utils/wildcardmatch').matchURL
 
 const {
     createGrantCode,
@@ -72,10 +73,7 @@ server.exchange(oauth.exchange.code(
             if (client.id !== grantCode.client.id) {
                 return done(null,false) //Wrong Client ID
             }
-            let callbackMatch = false
-            for (url of client.callbackURL) {
-                if (redirectURI.startsWith(url)) callbackMatch = true
-            }
+            let callbackMatch = matchURL(client.callbackURL,redirectURI);
             if (!callbackMatch) {
                 return done(null,false) // Wrong redirect URI
             }
@@ -97,10 +95,10 @@ const authorizationMiddleware = [
         try {
             const client = await findClientById(clientId);
             debug(callbackURL)
-            for (url of client.callbackURL) {
-                if (callbackURL.startsWith(url)) {
-                    return done(null, client, callbackURL)
-                }
+            // We validate that callbackURL matches with any one registered in DB
+            let callbackMatch = matchURL(client.callbackURL,callbackURL);
+            if (callbackMatch) {
+                return done(null, client, callbackURL)
             }
             return done(null, false);
         } catch (error) {
