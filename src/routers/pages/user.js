@@ -168,6 +168,12 @@ router.post('/me/edit',
                     where: {userId: req.user.id}
                 })
             }
+            
+            var obj = req.session.authorize;
+            var redirectTo = obj[Object.keys(obj)[0]].redirectURI;
+            if(redirectTo) {
+                return res.redirect(redirectTo);
+            }
             res.redirect('/users/me')
         } catch (err) {
             Raven.captureException(err)
