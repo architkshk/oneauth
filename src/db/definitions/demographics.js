@@ -38,7 +38,19 @@ module.exports = {
             primaryKey: true
         }
     },
-
+    
+    countrycode: {
+        dial_code: {
+            type: Sequelize.DataTypes.STRING,
+            unique: true,
+            // allowNull: false
+        },
+        code: {
+            type: Sequelize.DataTypes.STRING(2),
+            primaryKey: true,
+        }
+    },
+    
     college: {
         name: {
             type: Sequelize.DataTypes.STRING,

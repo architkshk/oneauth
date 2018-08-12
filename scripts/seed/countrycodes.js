@@ -2,12 +2,12 @@ const config = require("../../config");
 const secret = config.SECRETS;
 const {
   db,
-  models: { CountryCodes }
+  models: { CountryCode }
 } = require("../../src/db/models");
 
 (async () => {
   try {
-    await CountryCodes.bulkCreate([
+    await CountryCode.bulkCreate([
       [
         { name: "Israel", dial_code: "+972", code: "IL" },
         { name: "Afghanistan", dial_code: "+93", code: "AF" },

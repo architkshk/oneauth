@@ -140,9 +140,13 @@ const Country = db.define('country', definitions.demographics.country)
 const College = db.define('college', definitions.demographics.college)
 const Company = db.define('company', definitions.demographics.company)
 const Branch = db.define('branch', definitions.demographics.branch)
+const CountryCode = db.define('countrycode', definitions.demographics.countrycode)
 
 State.belongsTo(Country)
 Country.hasMany(State)
+
+CountryCode.belongsTo(Country)
+Country.hasMany(CountryCode)
 
 Address.belongsTo(State)
 State.hasMany(Address)
@@ -180,7 +184,7 @@ module.exports = {
     models: {
         User, UserLocal, UserFacebook, UserTwitter, UserGithub, UserGoogle, UserLms,
         Client, GrantCode, AuthToken, Resetpassword, Verifyemail,
-        Demographic, Address, College, Company, Branch, State, Country
+        Demographic, Address, College, Company, Branch, State, Country, CountryCode
     },
     db
 }
